@@ -4,6 +4,7 @@ namespace App;
 
 require_once __DIR__ . '/init.php';
 
+use App\Controllers\Auth;
 use App\Exceptions\RouteNotFoundException;
 
 /**
@@ -57,11 +58,6 @@ class Engine
             }
         }
 
-        if (isset($this->routes['default']) && is_callable($this->routes['default'])) {
-            call_user_func($this->routes['default']);
-            return;
-        }
-
         $action_data = explode('/', $url);
 
         $action = array_splice($action_data, count($action_data) - 1, 1)[0];
@@ -72,9 +68,16 @@ class Engine
 
         foreach ($this->routes['rules'] as $route => $controller) {
             if ($rule === $route) {
-                if (method_exists($controller, $action))
+                if (method_exists($controller, $action)) {
                     call_user_func([new $controller, $action]);
+                    return;
+                }
             }
+        }
+
+        if (isset($this->routes['default']) && is_callable($this->routes['default'])) {
+            call_user_func($this->routes['default']);
+            return;
         }
     }
 

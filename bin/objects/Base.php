@@ -24,6 +24,11 @@ class Base
         // ok...
     }
 
+    public function __isset (string $key): bool
+    {
+        return isset($_SESSION[$key]);
+    }
+
     public static function create (): static
     {
         return new static();

@@ -2,24 +2,20 @@
 
 namespace App\Controllers;
 
-use App\Models\Auth;
-
-class Main extends Base
+class Auth extends Base
 {
     public function __construct ()
     {
-        $this->model = \App\Models\Main::create();
+        $this->model = \App\Models\Auth::create();
 
-        $auth = Auth::check();
+        $auth = \App\Models\Auth::check();
         if ($auth) {
             $this->redirect('/users/');
-        } else {
-            $this->redirect('/auth/');
         }
     }
 
     public function index (): static
     {
-        return $this;
+        return $this->show('auth');
     }
 }

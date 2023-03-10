@@ -1,0 +1,112 @@
+<?php
+
+namespace App\Models;
+
+/**
+ * Модель для работы с БД
+ * В нашем случае это просто JSON-файл (тестовая, не более).
+ */
+class Record extends Base
+{
+    private bool $isNew;
+
+    protected static string $dbPath = __DIR__ . '/../../db,json';
+
+    private array $db;
+    private string $primaryColumn;
+
+    /**
+     * То, что пойдет в БД
+     */
+    protected array $finalObject = [];
+
+    public function __construct(bool $isNew = true, string $primaryColumn = '')
+    {
+        parent::__construct();
+
+        $this->isNew = $isNew;
+        $this->primaryColumn = $primaryColumn;
+        $this->db = json_decode(file_get_contents(self::$dbPath), true);
+    }
+
+    public function __destruct ()
+    {
+        $this->save();
+    }
+
+    public function __set (string $key, string $value): void
+    {
+        if ($key === $this->primaryColumn) {
+            foreach ($this->db as $id => $object) {
+                if ($id === $value) {
+                    $this->finalObject = $object;
+                    $this->isNew = false;
+                }
+            }
+        }
+
+        $this->finalObject[$key] = $value;
+    }
+
+    public function __get (string $key): ?string
+    {
+        return $this->finalObject[$key];
+    }
+
+    ////////////////////////////////////////////
+    public function insert (): static
+    {
+        $last_id = 0;
+        foreach ($this->db as $key => $value)
+        {
+            $last_id = (int) $key;
+        }
+
+        $this->finalObject[$this->primaryColumn] = $last_id;
+        $this->db[$last_id] = $this->finalObject;
+        $this->write();
+
+        return $this;
+    }
+
+    public function update (): static
+    {
+        $this->db[$this->primaryColumn] = $this->finalObject;
+        $this->write();
+
+        return $this;
+    }
+
+    public function save (): static
+    {
+        return $this->isNew ? $this->insert() : $this->update();
+    }
+
+    public function delete (): void
+    {
+        unset($this->db[$this->primaryColumn]);
+        $this->write();
+        self::$dbPath = NULL;
+    }
+
+    private function write (): void
+    {
+        file_put_contents(self::$dbPath, json_encode($this->db, JSON_PRETTY_PRINT));
+    }
+    ////////////////////////////////////////////
+
+    /**
+     * @param int $id
+     * @return Record|null
+     */
+    public static function find (int $id): ?static
+    {
+        $object = new static();
+        $object->{$object->primaryColumn} = $id;
+        if ($object->isNew) {
+            return NULL;
+        }
+
+        return $object;
+    }
+}
