@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  php:
+    platform: linux
+    volumes:
+      - ./:/project
+    env_file:
+      - .env
+    build: ./build/php
+    hostname: php
+    restart: always
+    tty: true
+  nginx:
+    platform: linux
+    build: ./build/nginx
+    ports:
+      - '80:80'
+    volumes:
+      - ./:/project
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/project.conf:/etc/nginx/project.conf:ro
+    env_file:
+      - .env
+    hostname: nginx
+    tty: true
+    restart: always
+    links:
+      - php
