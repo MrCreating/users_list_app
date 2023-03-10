@@ -5,12 +5,15 @@ services:
     platform: linux
     volumes:
       - ./:/project
+      - ./config/php/php.ini:/usr/local/etc/php/php.ini
     env_file:
       - .env
     build: ./build/php
     hostname: php
-    restart: always
+    restart: unless-stopped
     tty: true
+    links:
+      - memcached
   nginx:
     platform: linux
     build: ./build/nginx
@@ -18,8 +21,8 @@ services:
       - '80:80'
     volumes:
       - ./:/project
-      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./config/project.conf:/etc/nginx/project.conf:ro
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx/project.conf:/etc/nginx/project.conf:ro
     env_file:
       - .env
     hostname: nginx
@@ -27,3 +30,13 @@ services:
     restart: always
     links:
       - php
+  memcached:
+    platform: linux
+    build: ./build/memcached
+    ports:
+      - '11211:11211'
+    env_file:
+      - .env
+    hostname: memcached
+    tty: true
+    restart: unless-stopped
