@@ -94,6 +94,13 @@ class Engine
         $this->routes['rules'] = $result;
     }
 
+    public function withOutErrors (): static
+    {
+        ini_set('display_errors', 0);
+        error_reporting(0);
+        return $this;
+    }
+
     /**
      * Инициируем приложение
      */

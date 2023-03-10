@@ -29,11 +29,6 @@ class Record extends Base
         $this->db = json_decode(file_get_contents(self::$dbPath), true);
     }
 
-    public function __destruct ()
-    {
-        $this->save();
-    }
-
     public function __set (string $key, string $value): void
     {
         if ($key === $this->primaryColumn) {

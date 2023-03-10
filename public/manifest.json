@@ -1,0 +1,10 @@
+{
+  "short_name": "UserList.",
+  "name": "Users List App.",
+  "description": "...may be?",
+  "start_url": "/",
+  "background_color": "#FFF",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#42A5F5"
+}

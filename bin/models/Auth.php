@@ -28,5 +28,16 @@ class Auth extends Record
     public static function start (string $login, string $password): ?Auth
     {
         $db = json_decode(file_get_contents(self::$dbPath), true);
+
+        foreach ($db as $user) {
+            if ($user['login'] === $login && $user['password'] === $password) {
+                $session = Session::create();
+                $session->user_id = $user['user_id'];
+
+                return new static($user['user_id']);
+            }
+        }
+
+        return NULL;
     }
 }
