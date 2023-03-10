@@ -7,7 +7,6 @@ use App\Models\Session;
 use App\Models\User;
 use App\Objects\Request;
 use App\Objects\Response;
-use JetBrains\PhpStorm\NoReturn;
 
 class UsersList extends Base
 {
@@ -32,7 +31,7 @@ class UsersList extends Base
         return $this->show('create_user');
     }
 
-    #[NoReturn] public function create_new (): string
+    public function create_new (): string
     {
         $form = Request::create();
         $response = Response::create();
@@ -65,7 +64,7 @@ class UsersList extends Base
         die($response);
     }
 
-    #[NoReturn] public function update (): string
+    public function update (): string
     {
         $form = Request::create();
         $response = Response::create();

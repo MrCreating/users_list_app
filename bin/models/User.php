@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @property int $user_id
@@ -19,7 +18,7 @@ class User extends Record
         parent::__construct($isNew, $primaryColumn);
     }
 
-    #[ArrayShape(['first_name' => "string", 'last_name' => "string", 'age' => "int", 'login' => "string", 'password' => "string"])] public function toArray (): array
+    public function toArray (): array
     {
         return [
             'first_name' => $this->first_name,

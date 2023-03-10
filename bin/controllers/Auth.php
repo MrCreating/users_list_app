@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Objects\Request;
 use App\Objects\Response;
-use JetBrains\PhpStorm\NoReturn;
 
 class Auth extends Base
 {
@@ -23,7 +22,7 @@ class Auth extends Base
         return $this->show('auth');
     }
 
-    #[NoReturn] public function start ()
+    public function start ()
     {
         $form = Request::create();
 

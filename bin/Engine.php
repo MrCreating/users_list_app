@@ -4,7 +4,6 @@ namespace App;
 
 require_once __DIR__ . '/init.php';
 
-use App\Controllers\Auth;
 use App\Exceptions\RouteNotFoundException;
 
 /**
