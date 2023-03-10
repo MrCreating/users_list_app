@@ -33,7 +33,7 @@ class Record extends Base
     {
         if ($key === $this->primaryColumn) {
             foreach ($this->db as $id => $object) {
-                if ($id === $value) {
+                if ((string)$id === (string)$value) {
                     $this->finalObject = $object;
                     $this->isNew = false;
                 }
@@ -57,7 +57,10 @@ class Record extends Base
             $last_id = (int) $key;
         }
 
+        $last_id += 1;
+
         $this->finalObject[$this->primaryColumn] = $last_id;
+
         $this->db[$last_id] = $this->finalObject;
         $this->write();
 
@@ -66,7 +69,7 @@ class Record extends Base
 
     public function update (): static
     {
-        $this->db[$this->primaryColumn] = $this->finalObject;
+        $this->db[$this->finalObject[$this->primaryColumn]] = $this->finalObject;
         $this->write();
 
         return $this;
@@ -79,9 +82,8 @@ class Record extends Base
 
     public function delete (): void
     {
-        unset($this->db[$this->primaryColumn]);
+        unset($this->db[$this->finalObject[$this->primaryColumn]]);
         $this->write();
-        self::$dbPath = NULL;
     }
 
     private function write (): void
@@ -90,6 +92,11 @@ class Record extends Base
     }
     ////////////////////////////////////////////
 
+    public function __serialize(): array
+    {
+        return $this->finalObject;
+    }
+
     /**
      * @param int $id
      * @return Record|null
@@ -97,6 +104,7 @@ class Record extends Base
     public static function find (int $id): ?static
     {
         $object = new static();
+
         $object->{$object->primaryColumn} = $id;
         if ($object->isNew) {
             return NULL;

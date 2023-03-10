@@ -20,6 +20,16 @@ class Session extends Base
         $_SESSION[$key] = $value;
     }
 
+    public function __unset(string $name): void
+    {
+        unset($_SESSION['user_id']);
+    }
+
+    public function __isset(string $key): bool
+    {
+        return isset($_SESSION[$key]);
+    }
+
     public function __destruct ()
     {
         session_write_close();
